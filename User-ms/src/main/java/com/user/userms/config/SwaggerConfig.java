@@ -1,4 +1,4 @@
-package com.edu.userms.config;
+package com.user.userms.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
