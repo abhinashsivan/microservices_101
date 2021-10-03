@@ -1,0 +1,41 @@
+server:
+  port: 9090
+
+eureka:
+  client:
+    registerWithEureka: true
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+
+spring:
+  main:
+    web-application-type: reactive
+  application:
+    name: apigateway
+  cloud:
+    gateway:
+      discovery.locator:
+        enabled: true
+        lowerCaseServiceId: true
+      routes:
+        - id: userms
+          uri: lb://USERMS
+          predicates:
+            - Path=/api-gateway/**
+          filters:
+            - RewritePath=/api-gateway/(?<path>.*), /$\{path}
+
+        - id: orderms
+          uri: lb://ORDERMS
+          predicates:
+            - Path=/api-gateway/**
+          filters:
+            - RewritePath=/api-gateway/(?<path>.*), /$\{path}
+
+# http://localhost:9090/actuator/gateway/routes
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
