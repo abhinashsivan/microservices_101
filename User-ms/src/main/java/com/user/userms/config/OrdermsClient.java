@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.GetMapping;
 
-@FeignClient(name = "orderms8")
+@FeignClient(name = "orderms")
 public interface OrdermsClient {
 
     @GetMapping("/orders")
