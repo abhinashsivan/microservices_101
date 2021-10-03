@@ -2,6 +2,7 @@ package com.user.userms.resource;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import com.user.userms.config.OrdermsClient;
 import com.user.userms.model.Error;
 import com.user.userms.model.User;
 import com.user.userms.repo.UserRepo;
@@ -16,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-public class UserResource {
+public  class UserResource{
 
     private static final Logger LOGGER = LoggerFactory.getLogger(UserResource.class);
 
@@ -24,7 +25,23 @@ public class UserResource {
     private UserRepo repo;
 
     @Autowired
-    OrdermsClient ordermsClient;
+    private OrdermsClient ordermsClient;
+
+    @GetMapping("/userOrders")
+    @HystrixCommand(fallbackMethod = "myFallBackMethod",
+            commandProperties = {@HystrixProperty(
+                    name = "execution.isolation.thread.timeoutInMilliseconds",
+                    value = "30000")})
+
+    public Object getALlOrdersFromOrderms() {
+        LOGGER.info("calling orderms from userms");
+        return ordermsClient.getAllOrders();
+    }
+
+    private String myFallBackMethod() {
+        return "SOMETHING HAPPENED WITH ORDERMS, IM FALLBACK";
+    }
+
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getUsers() {
@@ -60,19 +77,5 @@ public class UserResource {
             Error error = new Error("deleteUser", "User not found with given Id");
             return new ResponseEntity<Error>(error, HttpStatus.NOT_FOUND);
         }
-    }
-
-    @GetMapping("/userOrders")
-    @HystrixCommand(fallbackMethod = "myFallBackMethod",
-            commandProperties = {@HystrixProperty(
-                    name = "execution.isolation.thread.timeoutInMilliseconds",
-                    value = "30000")})
-    public Object getALlOrdersFromOrderms() {
-        LOGGER.info("calling orderms from userms");
-        return ordermsClient.getAllOrders();
-    }
-
-    private String myFallBackMethod() {
-        return "SOMETHING HAPPENED WITH ORDERMS, IM FALLBACK";
     }
 }
