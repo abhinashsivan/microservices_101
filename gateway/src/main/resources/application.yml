@@ -22,16 +22,16 @@ spring:
         - id: userms
           uri: lb://USERMS
           predicates:
-            - Path=/api-gateway/**
+            - Path=/userms-gateway/**
           filters:
-            - RewritePath=/api-gateway/(?<path>.*), /$\{path}
+            - RewritePath=/userms-gateway/(?<path>.*), /$\{path}
 
         - id: orderms
           uri: lb://ORDERMS
           predicates:
-            - Path=/api-gateway/**
+            - Path=/orderms-gateway/**
           filters:
-            - RewritePath=/api-gateway/(?<path>.*), /$\{path}
+            - RewritePath=/orderms-gateway/(?<path>.*), /$\{path}
 
 # http://localhost:9090/actuator/gateway/routes
 management:

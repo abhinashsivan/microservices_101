@@ -27,13 +27,13 @@ public  class UserResource{
     @Autowired
     private OrdermsClient ordermsClient;
 
-    @GetMapping("/userOrders")
+    @GetMapping("/orders")
     @HystrixCommand(fallbackMethod = "myFallBackMethod",
             commandProperties = {@HystrixProperty(
                     name = "execution.isolation.thread.timeoutInMilliseconds",
                     value = "30000")})
 
-    public Object getALlOrdersFromOrderms() {
+    public Object getAllOrdersFromOrderms() {
         LOGGER.info("calling orderms from userms");
         return ordermsClient.getAllOrders();
     }
@@ -47,6 +47,12 @@ public  class UserResource{
     public ResponseEntity<List<User>> getUsers() {
         List<User> listUsers = repo.findAll();
         return new ResponseEntity<>(listUsers, HttpStatus.OK);
+    }
+
+    @GetMapping("/users/{id}")
+    public ResponseEntity<Optional<User>> getUsers(@PathVariable Long id ) {
+        Optional<User> User = repo.findById(id);
+        return new ResponseEntity<Optional<User>>(User, HttpStatus.OK);
     }
 
     @PostMapping("/users")
